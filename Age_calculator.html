@@ -1,129 +1,51 @@
 <!DOCTYPE html>
-
 <html lang="ko">
-
 <head>
-
   <meta charset="UTF-8">
-
   <title>나이 계산기</title>
-
   <style>
-
     body { font-family: Arial, sans-serif; padding: 20px; }
-
     input { width: 160px; padding: 5px; margin-right: 10px; }
-
     button { padding: 6px 12px; margin: 10px 5px; cursor: pointer; }
-
     #result { margin-top: 20px; font-size: 18px; font-weight: bold; }
-
   </style>
-
 </head>
-
 <body>
-
-
-
   <h2>연나이 / 만나이 계산기</h2>
-
-
-
   <label>현재날짜:</label>
-
   <input type="text" id="currentDate" placeholder="예: 2025-10-11"><br><br>
-
-
-
   <label>생년월일:</label>
-
   <input type="text" id="birthDate" placeholder="예: 2008-10-17"><br><br>
-
-
-
   <button onclick="calculateAges()">나이 계산</button>
-
-
-
   <div id="result"></div>
-
-
-
   <script>
-
     function calculateAges() {
-
       const currentDateStr = document.getElementById("currentDate").value.trim();
-
       const birthDateStr = document.getElementById("birthDate").value.trim();
-
       const resultDiv = document.getElementById("result");
-
-
-
       const datePattern = /^\d{4}-\d{2}-\d{2}$/;
-
-
-
       if (!datePattern.test(currentDateStr) || !datePattern.test(birthDateStr)) {
-
         resultDiv.innerText = "날짜를 YYYY-MM-DD 형식으로 입력해주세요.";
-
         return;
-
       }
-
-
-
       const currentDate = new Date(currentDateStr);
-
       const birthDate = new Date(birthDateStr);
-
-
-
       if (isNaN(currentDate.getTime()) || isNaN(birthDate.getTime())) {
-
         resultDiv.innerText = "올바른 날짜를 입력해주세요.";
-
         return;
-
       }
-
-
-
       // 연나이 계산
-
       const yearAge = currentDate.getFullYear() - birthDate.getFullYear();
-
-
-
       // 만나이 계산
-
       let manAge = yearAge;
-
       const monthDiff = currentDate.getMonth() - birthDate.getMonth();
-
       const dayDiff = currentDate.getDate() - birthDate.getDate();
-
       if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-
         manAge--;
-
       }
-
-
-
       // 결과만 출력
-
       resultDiv.innerText = `연나이: ${yearAge} / 만나이: ${manAge}`;
-
     }
-
   </script>
-
-
-
 </body>
-
 </html>
