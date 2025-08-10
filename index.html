@@ -4,10 +4,42 @@
   <meta charset="UTF-8">
   <title>나이 계산기</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
+    body { font-family: Arial, sans-serif; padding: 20px; position: relative; }
     input, select { width: 240px; padding: 5px; margin: 5px 0; }
     button { padding: 6px 12px; margin: 10px 0; cursor: pointer; }
     #result { margin-top: 20px; font-size: 18px; font-weight: bold; white-space: pre-line; }
+
+    /* 의견 영역 스타일 */
+    #opinionContainer {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 320px;
+      max-width: 90vw;
+      background: #f9f9f9;
+      border: 1px solid #ccc;
+      padding: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      display: none;
+      z-index: 1000;
+    }
+    #opinionText {
+      width: 100%;
+      height: 120px;
+      resize: vertical;
+      font-size: 14px;
+      padding: 6px;
+    }
+    #opinionBtn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1100;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
@@ -32,6 +64,14 @@
   <button onclick="calculateAges()">나이 계산</button>
 
   <div id="result"></div>
+
+  <!-- 의견 작성 버튼 -->
+  <button id="opinionBtn" title="경찰관 의견 작성">의견 작성</button>
+
+  <!-- 의견 입력창 -->
+  <div id="opinionContainer">
+    <textarea id="opinionText" placeholder="여기에 의견을 작성하세요..."></textarea>
+  </div>
 
   <script>
     const 규정 = {
@@ -130,6 +170,32 @@
       const todayStr = currentDate.toISOString().split('T')[0];
       resultDiv.innerText = `오늘 날짜: ${todayStr}\n연나이: ${yearAge} / 만나이: ${manAge}\n\n${lawResults}`;
     }
+
+    // --- 의견 작성 기능 추가 ---
+    const opinionBtn = document.getElementById("opinionBtn");
+    const opinionContainer = document.getElementById("opinionContainer");
+    const opinionText = document.getElementById("opinionText");
+
+    // 페이지 로드 시 로컬스토리지에서 의견 불러오기
+    window.onload = () => {
+      const savedOpinion = localStorage.getItem("policeOpinion");
+      if (savedOpinion) {
+        opinionText.value = savedOpinion;
+      }
+    };
+
+    opinionBtn.addEventListener("click", () => {
+      if (opinionContainer.style.display === "none" || opinionContainer.style.display === "") {
+        // 의견창 열기
+        opinionContainer.style.display = "block";
+        opinionText.focus();
+      } else {
+        // 의견창 닫고 저장
+        opinionContainer.style.display = "none";
+        localStorage.setItem("policeOpinion", opinionText.value.trim());
+        alert("의견이 저장되었습니다.");
+      }
+    });
   </script>
 </body>
 </html>
