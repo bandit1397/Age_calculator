@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>나이 계산기</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; position: relative; }
+    input, select { width: 240px; padding: 5px; margin: 5px 0; }
+    button { padding: 6px 12px; margin: 10px 0; cursor: pointer; }
+    #result { margin-top: 20px; font-size: 18px; font-weight: bold; white-space: pre-line; }
+
+    /* 의견 영역 스타일 */
+    #opinionContainer {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 320px;
+      max-width: 90vw;
+      background: #f9f9f9;
+      border: 1px solid #ccc;
+      padding: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      display: none;
+      z-index: 1000;
+    }
+    #opinionText {
+      width: 100%;
+      height: 120px;
+      resize: vertical;
+      font-size: 14px;
+      padding: 6px;
+    }
+    #opinionBtn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1100;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>연나이 / 만나이 계산기</h2>
+
+  <label>생년월일:</label><br>
+  <input type="text" id="birthDate" placeholder="예: 2008-10-17"><br>
+
+  <label>용어 선택:</label><br>
+  <select id="termSelect">
+    <option value="">-- 용어 선택 --</option>
+    <option value="소년">소년</option>
+    <option value="아동">아동</option>
+    <option value="아동청소년">아동청소년</option>
+    <option value="어린이">어린이</option>
+    <option value="청소년">청소년</option>
+    <option value="촉법소년">촉법소년</option>
+    <option value="미성년">미성년</option>
+  </select><br>
+
+  <button onclick="calculateAges()">나이 계산</button>
+
+  <div id="result"></div>
+
+  <!-- 의견 작성 버튼 -->
+  <button id="opinionBtn" title="경찰관 의견 작성">의견 작성</button>
+
+  <!-- 의견 입력창 -->
+  <div id="opinionContainer">
+    <textarea id="opinionText" placeholder="여기에 의견을 작성하세요..."></textarea>
+  </div>
+
+  <script>
+    const 규정 = {
+      "청소년보호법": {
+        "청소년": { 기준: "연나이", 최대: 19 }
+      },
+      "식품위생법": {
+        "청소년": { 기준: "연나이", 최대: 19 }
+      },
+      "음악산업진흥에관한법률": {
+        "청소년": { 기준: "연나이", 최대: 19 }
+      },
+      "게임산업진흥에관한법률": {
+        "청소년": { 기준: "연나이", 최대: 19 }
+      },
+      "아동청소년의 성보호에관한법률": {
+        "아동청소년": { 기준: "만나이", 최대: 19 }
+      },
+      "청소년기본법": {
+        "청소년": { 기준: "만나이범위", 최소: 9, 최대: 24 }
+      },
+      "민법": {
+        "미성년": { 기준: "만나이", 최대: 19 }
+      },
+      "아동복지법": {
+        "아동": { 기준: "만나이", 최대: 18 }
+      },
+      "도로교통법": {
+        "어린이": { 기준: "만나이", 최대: 13 }
+      },
+      "소년법": {
+        "촉법소년": { 기준: "만나이범위", 최소: 10, 최대: 13 },
+        "소년": { 기준: "만나이", 최대: 19 }
+      }
+    };
+
+    function calculateAges() {
+      const birthDateStr = document.getElementById("birthDate").value.trim();
+      const term = document.getElementById("termSelect").value;
+      const resultDiv = document.getElementById("result");
+
+      const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+      if (!datePattern.test(birthDateStr)) {
+        resultDiv.innerText = "생년월일을 YYYY-MM-DD 형식으로 입력해주세요.";
+        return;
+      }
+
+      const birthDate = new Date(birthDateStr);
+      const currentDate = new Date(); // 오늘 날짜 자동 사용
+
+      if (isNaN(birthDate.getTime())) {
+        resultDiv.innerText = "올바른 생년월일을 입력해주세요.";
+        return;
+      }
+
+      const yearAge = currentDate.getFullYear() - birthDate.getFullYear();
+      let manAge = yearAge;
+      const monthDiff = currentDate.getMonth() - birthDate.getMonth();
+      const dayDiff = currentDate.getDate() - birthDate.getDate();
+      if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        manAge--;
+      }
+
+      let lawResults = "";
+
+      if (term) {
+        for (const law in 규정) {
+          if (규정[law][term]) {
+            const 기준정보 = 규정[law][term];
+            const 기준 = 기준정보.기준;
+            let 해당 = false;
+            let 설명 = "";
+
+            if (기준 === "연나이") {
+              해당 = yearAge < 기준정보.최대;
+              설명 = `${law} ${term} (연나이 ${기준정보.최대}세 미만): ${해당 ? "해당됨 ✅" : "해당 안 됨 ❌"}`;
+            } else if (기준 === "만나이") {
+              해당 = manAge < 기준정보.최대;
+              설명 = `${law} ${term} (만나이 ${기준정보.최대}세 미만): ${해당 ? "해당됨 ✅" : "해당 안 됨 ❌"}`;
+            } else if (기준 === "만나이범위") {
+              해당 = manAge >= 기준정보.최소 && manAge <= 기준정보.최대;
+              설명 = `${law} ${term} (만나이 ${기준정보.최소}세 이상 ~ ${기준정보.최대}세 이하): ${해당 ? "해당됨 ✅" : "해당 안 됨 ❌"}`;
+            }
+
+            lawResults += 설명 + "\n";
+          }
+        }
+
+        if (!lawResults) {
+          lawResults = "선택한 용어에 해당하는 법률 기준이 없습니다.";
+        }
+      } else {
+        lawResults = "용어를 선택해주세요.";
+      }
+
+      const todayStr = currentDate.toISOString().split('T')[0];
+      resultDiv.innerText = `오늘 날짜: ${todayStr}\n연나이: ${yearAge} / 만나이: ${manAge}\n\n${lawResults}`;
+    }
+
+    // --- 의견 작성 기능 추가 ---
+    const opinionBtn = document.getElementById("opinionBtn");
+    const opinionContainer = document.getElementById("opinionContainer");
+    const opinionText = document.getElementById("opinionText");
+
+    // 페이지 로드 시 로컬스토리지에서 의견 불러오기
+    window.onload = () => {
+      const savedOpinion = localStorage.getItem("policeOpinion");
+      if (savedOpinion) {
+        opinionText.value = savedOpinion;
+      }
+    };
+
+    opinionBtn.addEventListener("click", () => {
+      if (opinionContainer.style.display === "none" || opinionContainer.style.display === "") {
+        // 의견창 열기
+        opinionContainer.style.display = "block";
+        opinionText.focus();
+      } else {
+        // 의견창 닫고 저장
+        opinionContainer.style.display = "none";
+        localStorage.setItem("policeOpinion", opinionText.value.trim());
+        alert("의견이 저장되었습니다.");
+      }
+    });
+  </script>
+</body>
+</html>
