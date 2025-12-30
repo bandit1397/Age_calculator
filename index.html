@@ -191,12 +191,7 @@ function calculateAges() {
           ${기준정보.refs.map(ref => {
             const searchRef = ref.replace(/(제\d+조).*/, "$1");
             const query = encodeURIComponent(searchRef);
-
-            return `<a href="https://law.go.kr/LSW/lsSc.do?query=${query}"
-                       target="_blank"
-                       style="color:#1e90ff; font-weight:600; text-decoration:underline;">
-                       ${ref}
-                    </a>`;
+            return `<a href="https://law.go.kr/LSW/lsSc.do?query=${query}" target="_blank">${ref}</a>`;
             }).join("<br>")}
           <br>
         `;
@@ -237,6 +232,7 @@ function calculateAges() {
 
 </body>
 </html>
+
 
 
 
