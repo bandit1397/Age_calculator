@@ -1,76 +1,20 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>나이 계산기</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 10px;
-      margin: 0;
-      background: #f7f7f7;
-    }
-
-    .container {
-      max-width: 400px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-      font-size: 20px;
-      text-align: center;
-      margin-bottom: 15px;
-    }
-
-    label {
-      font-size: 14px;
-      display: block;
-      margin-top: 10px;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      margin-top: 15px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-
-    #result {
-      margin-top: 20px;
-      font-size: 16px;
-      font-weight: bold;
-      white-space: pre-line;
-      word-break: break-word;
-    }
-
-    a {
-      color: #1e90ff;
-      text-decoration: underline;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나이 계산기</title>
+<style>
+body { font-family: Arial, sans-serif; padding: 10px; margin: 0; background: #f7f7f7; }
+.container { max-width: 400px; margin: 0 auto; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+h2 { font-size: 20px; text-align: center; margin-bottom: 15px; }
+label { font-size: 14px; display: block; margin-top: 10px; }
+input, select { width: 100%; padding: 10px; margin-top: 5px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; }
+button { width: 100%; padding: 12px; font-size: 16px; margin-top: 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+button:hover { background-color: #0056b3; }
+#result { margin-top: 20px; font-size: 16px; font-weight: bold; white-space: pre-line; word-break: break-word; }
+a { color: #1e90ff; text-decoration: underline; }
+</style>
 </head>
 <body>
 
@@ -96,6 +40,11 @@
     <option value="형사미성년자">형사미성년자</option>
   </select>
 
+  <label>법률 선택 (선택하지 않으면 모든 법률 표시):</label>
+  <select id="lawSelect">
+    <option value="">-- 모든 법률 --</option>
+  </select>
+
   <button onclick="calculateAges()">나이 계산</button>
 
   <div id="result"></div>
@@ -104,8 +53,7 @@
 <script>
 /* ===== 법률 규정 ===== */
 const 규정 = {
-
- 
+   
 "청소년보호법": {
   terms: {
     "청소년": {
@@ -128,46 +76,310 @@ const 규정 = {
      ]
     }
   }
-}
+},
 
+
+"음악산업진흥에관한법률": {
+  terms: {
+    "청소년": {
+      기준: "연나이",
+      최대: 19,
+      refs: [
+        "음악산업진흥에관한법률 제2조 제14호"
+     ]
+    }
+  }
+},
+
+
+
+"게임산업진흥에관한법률": {
+  terms: {
+    "청소년": {
+      기준: "연나이",
+      최대: 19,
+      refs: [
+        "게임산업진흥에관한법률 제2호 제10호"
+     ]
+    }
+  }
+},
+
+
+"공연법": {
+  terms: {
+    "청소년": {
+      기준: "연나이",
+      최대: 19,
+      refs: [
+        "공연법 제2조 제6호"
+     ]
+    }
+  }
+},
+
+
+"영화 및 비디오물의 진흥에 관한 법률 ": {
+  terms: {
+    "청소년": {
+      기준: "연나이",
+      최대: 19,
+      refs: [
+        "영화 및 비디오물의 진흥에 관한 법률 제2조 18호 "
+     ]
+    }
+  }
+},
+
+"아동ㆍ청소년의 성보호에 관한 법률": {
+  terms: {
+    "아동ㆍ청소년": {
+      기준: "만나이",
+      최대: 19,
+      refs: [
+        "아동ㆍ청소년의 성보호에 관한 법률 제2조 제1호"
+     ]
+    }
+  }
+},
+
+
+
+"근로자기준법": {
+  terms: {
+    "연소자": {
+      기준: "만나이",
+      최대: 18,
+      refs: [
+        "근로자기준법 제66조"
+     ]
+    }
+  }
+},
+
+
+
+"실종아동등의 보호 및 지원에 관한 법률": {
+  terms: {
+    "아동등": {
+      기준: "만나이",
+      최대: 18,
+      refs: [
+        "실종아동등의 보호 및 지원에 관한 법률 제2조 제1호"
+     ]
+    }
+  }
+},
+
+
+
+"청소년기본법": {
+  terms: {
+    "청소년": {
+      기준: "만나이범위",
+      최소: 9,
+      최대: 24,
+      refs: [
+        "청소년기본법 제3조 제1호"
+     ]
+    }
+  }
+},
+
+
+"민법": {
+  terms: {
+    "미성년자": {
+      기준: "만나이",
+      최대: 19,
+      refs: [
+        "민법 제4조"
+     ]
+    }
+  }
+},
+
+
+"아동복지법": {
+  terms: {
+    "아동": {
+      기준: "만나이",
+      최대: 18,
+      refs: [
+        "아동복지법 제3조 제1호"
+     ]
+    }
+  }
+},
+
+
+"형법": {
+  terms: {
+    "미성년자": {
+      기준: "만나이",
+      최대: 16,
+      refs: [
+        "형법 제305조"
+      ]
+    },
  
+    "형사미성년자": {
+      기준: "만나이",
+      최대: 14,
+      refs: [
+        "형법 제9조"
+      ]
+    }
+  }
+},
 
+
+"도로교통법": {
+  terms: {
+    "어린이": {
+      기준: "만나이",
+      최대: 13,
+      refs: [
+        "도로교통법 제2조 제23호"
+     ]
+    }
+  }
+},
+
+
+"경범죄처벌법": {
+  terms: {
+    "통고처분 금지대상 연령": {
+      기준: "만나이",
+      최대: 18,
+      refs: [
+        "경범죄처벌법 제6조 제2항 제4호"
+     ]
+    }
+  }
+},
+
+
+
+"성폭력범죄의 처벌 등에 관한 특례법": {
+  terms: {
+    "미성년자": {
+      기준: "만나이",
+      최대: 13,
+      refs: [
+        "성폭력범죄의 처벌 등에 관한 특례법 제7조 제1항"
+     ]
+    }
+  }
+},
+
+
+"소년법": {
+  terms: {
+    "소년": {
+      기준: "만나이",
+      최소: 10,
+      최대: 19,
+      refs: [
+        "소년법 제2조",
+        "소년업무 처리규칙 제2조 제1호"
+      ]
+    },
+
+    "범죄소년": {
+      기준: "만나이",
+      최소: 14,
+      최대: 19,
+      refs: [
+        "소년법 제4조 제1항 제2호",
+        "소년업무 처리규칙 제2조 제2호"
+      ]
+    },
+
+    "촉법소년": {
+      기준: "만나이",
+      최소: 10,
+      최대: 14,
+      refs: [
+        "소년법 제4조 제1항 제1호",
+        "소년업무 처리규칙 제2조 제1호"
+      ]
+    },
+
+    "우범소년": {
+      기준: "만나이",
+      최소: 10,
+      최대: 14,
+      refs: [
+        "소년법 제4조 제1항 제3호",
+        "소년업무 처리규칙 제2조 제3호"
+      ]
+    }
+  }
+}
 };
 
+/* ===== 법조문 링크 생성 ===== */
 function makeLawLink(text) {
-  // 법령명과 조 추출 (예: "아동복지법 제3조 제1호" → 아동복지법, 제3조)
   const lawMatch = text.match(/^(.+?)\s제/);
   const articleMatch = text.match(/제\d+조/);
   if (!lawMatch || !articleMatch) return null;
-
   const lawName = lawMatch[1].trim();
   const article = articleMatch[0];
   const url = `https://law.go.kr/법령/${encodeURIComponent(lawName)}/${article}`;
-
-  return `<a href="${url}" target="_blank" style="color:#1e90ff; font-weight:600; text-decoration:underline;">
-            ${text}
-          </a>`;
+  return `<a href="${url}" target="_blank" style="color:#1e90ff; font-weight:600; text-decoration:underline;">${text}</a>`;
 }
 
+
+
+
+  
+
+/* ===== 용어 선택에 따른 법률 선택 박스 동적 업데이트 ===== */
+const termSelect = document.getElementById("termSelect");
+const lawSelect = document.getElementById("lawSelect");
+
+function updateLawOptions() {
+  const selectedTerm = termSelect.value;
+  lawSelect.innerHTML = '<option value="">-- 모든 법률 --</option>';
+  if (!selectedTerm) return;
+  for (const law in 규정) {
+    if (규정[law].terms && 규정[law].terms[selectedTerm]) {
+      const option = document.createElement("option");
+      option.value = law;
+      option.text = law;
+      lawSelect.appendChild(option);
+    }
+  }
+}
+
+termSelect.addEventListener("change", updateLawOptions);
+updateLawOptions(); // 초기 페이지 로드 시 적용
+
+
+  
+
+
+
+
+
+
+
+
+  
 /* ===== 나이 계산 ===== */
 function calculateAges() {
   const birthDateStr = document.getElementById("birthDate").value.trim();
   const term = document.getElementById("termSelect").value;
+  const lawFilter = document.getElementById("lawSelect").value; // 선택된 법률
   const resultDiv = document.getElementById("result");
 
   const datePattern = /^\d{4}-\d{2}-\d{2}$/;
-  if (!datePattern.test(birthDateStr)) {
-    resultDiv.innerText = "생년월일을 YYYY-MM-DD 형식으로 입력해주세요.";
-    return;
-  }
+  if (!datePattern.test(birthDateStr)) { resultDiv.innerText = "생년월일을 YYYY-MM-DD 형식으로 입력해주세요."; return; }
 
   const birthDate = new Date(birthDateStr);
   const currentDate = new Date();
-
-  if (isNaN(birthDate.getTime())) {
-    resultDiv.innerText = "올바른 생년월일을 입력해주세요.";
-    return;
-  }
+  if (isNaN(birthDate.getTime())) { resultDiv.innerText = "올바른 생년월일을 입력해주세요."; return; }
 
   const yearAge = currentDate.getFullYear() - birthDate.getFullYear();
   let manAge = yearAge;
@@ -179,17 +391,13 @@ function calculateAges() {
 
   if (term) {
     for (const law in 규정) {
+      if (lawFilter && law !== lawFilter) continue; // 특정 법률만 표시
       if (규정[law].terms && 규정[law].terms[term]) {
         const info = 규정[law].terms[term];
         let 해당 = false;
-
-        if (info.기준 === "연나이") {
-          해당 = yearAge < info.최대;
-        } else if (info.기준 === "만나이") {
-          해당 = manAge < info.최대;
-        } else if (info.기준 === "만나이범위") {
-          해당 = manAge >= info.최소 && manAge <= info.최대;
-        }
+        if (info.기준 === "연나이") 해당 = yearAge < info.최대;
+        else if (info.기준 === "만나이") 해당 = manAge < info.최대;
+        else if (info.기준 === "만나이범위") 해당 = manAge >= info.최소 && manAge <= info.최대;
 
         let 기준설명 = "";
         if (info.기준 === "연나이") 기준설명 = `(연나이 ${info.최대}세 미만)`;
@@ -200,27 +408,17 @@ function calculateAges() {
 
         lawResults += `
 ${law} ${term}${기준설명}: ${해당 ? "해당됨 ✅" : "해당 안 됨 ❌"}<br>
-${links}<br><br>
-`;
+${links}<br><br>`;
       }
     }
-
     if (!lawResults) lawResults = "선택한 용어에 해당하는 법률 기준이 없습니다.";
   } else {
     lawResults = "용어를 선택해주세요.";
   }
 
   const todayStr = currentDate.toISOString().split("T")[0];
-  resultDiv.innerHTML =
-    `오늘 날짜: ${todayStr}<br>` +
-    `연나이: ${yearAge} / 만나이: ${manAge}<br><br>` +
-    lawResults;
+  resultDiv.innerHTML = `오늘 날짜: ${todayStr}<br>연나이: ${yearAge} / 만나이: ${manAge}<br><br>${lawResults}`;
 }
-
-
-
-
-    
 </script>
 
 <div style="text-align:center;">
@@ -236,11 +434,5 @@ ${links}<br><br>
 
 </body>
 </html>
-
-
-
-
-
-
 
 
