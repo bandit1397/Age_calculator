@@ -66,136 +66,149 @@
       word-break: break-word;
     }
 
-    
+    a {
+      color: #1e90ff;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h2>연나이 / 만나이 계산기</h2>
+<div class="container">
+  <h2>연나이 / 만나이 계산기</h2>
 
-    <label>생년월일:</label>
-    <input type="text" id="birthDate" placeholder="예: 2008-10-17">
+  <label>생년월일:</label>
+  <input type="text" id="birthDate" placeholder="예: 2008-10-17">
 
-    <label>용어 선택:</label>
-    <select id="termSelect">
-      <option value="">-- 용어 선택 --</option>
-      <option value="소년">소년</option>
-      <option value="아동">아동</option>
-      <option value="아동등">아동등</option>
-      <option value="아동ㆍ청소년">아동ㆍ청소년</option>
-      <option value="어린이">어린이</option>
-      <option value="연소자">연소자</option>
-      <option value="청소년">청소년</option>
-      <option value="촉법소년">촉법소년</option>
-      <option value="범죄소년">범죄소년</option>
-      <option value="촉법소년">촉법소년</option>
-      <option value="우범소년">우범소년</option>
-      <option value="형사미성년자">형사미성년자</option>
-     </select>
+  <label>용어 선택:</label>
+  <select id="termSelect">
+    <option value="">-- 용어 선택 --</option>
+    <option value="소년">소년</option>
+    <option value="아동">아동</option>
+    <option value="아동등">아동등</option>
+    <option value="아동ㆍ청소년">아동ㆍ청소년</option>
+    <option value="어린이">어린이</option>
+    <option value="연소자">연소자</option>
+    <option value="청소년">청소년</option>
+    <option value="촉법소년">촉법소년</option>
+    <option value="범죄소년">범죄소년</option>
+    <option value="우범소년">우범소년</option>
+    <option value="형사미성년자">형사미성년자</option>
+  </select>
 
-    <button onclick="calculateAges()">나이 계산</button>
+  <button onclick="calculateAges()">나이 계산</button>
 
-    <div id="result"></div>
-  </div>
+  <div id="result"></div>
+</div>
 
-   
-  <script>
-    const 규정 = {
-       
-"청소년보호법": {
-  terms: {
-    "청소년": {
-      기준: "연나이",
-      최대: 19,
-      refs: [
-        "청소년보호법 제2조 제1호"
-     ]
+<script>
+/* ===== 법률 규정 ===== */
+const 규정 = {
+
+  "청소년보호법": {
+    terms: {
+      "청소년": {
+        기준: "연나이",
+        최대: 19,
+        refs: [
+          "청소년보호법 제2조 제1호"
+        ]
+      }
+    }
+  },
+
+  "식품위생법": {
+    terms: {
+      "청소년": {
+        기준: "연나이",
+        최대: 19,
+        refs: [
+          "식품위생법 제44조 제2항"
+        ]
+      }
     }
   }
-},
 
-"식품위생법": {
-  terms: {
-    "청소년": {
-      기준: "연나이",
-      최대: 19,
-      refs: [
-        "식품위생법 제44조 제2항"
-     ]
-    }
+};
+
+/* ===== 나이 계산 ===== */
+function calculateAges() {
+  const birthDateStr = document.getElementById("birthDate").value.trim();
+  const term = document.getElementById("termSelect").value;
+  const resultDiv = document.getElementById("result");
+
+  const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+  if (!datePattern.test(birthDateStr)) {
+    resultDiv.innerText = "생년월일을 YYYY-MM-DD 형식으로 입력해주세요.";
+    return;
   }
+
+  const birthDate = new Date(birthDateStr);
+  const currentDate = new Date();
+
+  if (isNaN(birthDate.getTime())) {
+    resultDiv.innerText = "올바른 생년월일을 입력해주세요.";
+    return;
+  }
+
+  const yearAge = currentDate.getFullYear() - birthDate.getFullYear();
+  let manAge = yearAge;
+
+  const monthDiff = currentDate.getMonth() - birthDate.getMonth();
+  const dayDiff = currentDate.getDate() - birthDate.getDate();
+  if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+    manAge--;
+  }
+
+  let lawResults = "";
+
+  if (term) {
+    for (const law in 규정) {
+      if (규정[law].terms && 규정[law].terms[term]) {
+        const 기준정보 = 규정[law].terms[term];
+        const 기준 = 기준정보.기준;
+        let 해당 = false;
+
+        if (기준 === "연나이") {
+          해당 = yearAge < 기준정보.최대;
+        } else if (기준 === "만나이") {
+          해당 = manAge < 기준정보.최대;
+        } else if (기준 === "만나이범위") {
+          해당 = manAge >= 기준정보.최소 && manAge <= 기준정보.최대;
+        }
+
+        lawResults += `${law} ${term}: ${해당 ? "해당됨 ✅" : "해당 안 됨 ❌"}\n`;
+
+        if (해당 && 기준정보.refs) {
+          기준정보.refs.forEach(ref => {
+            const url = `https://www.law.go.kr/lsSc.do?query=${encodeURIComponent(ref)}`;
+            lawResults += `🔗 ${ref}\n`;
+          });
+        }
+
+        lawResults += "\n";
+      }
+    }
+
+    if (!lawResults) {
+      lawResults = "선택한 용어에 해당하는 법률 기준이 없습니다.";
+    }
+  } else {
+    lawResults = "용어를 선택해주세요.";
+  }
+
+  const todayStr = currentDate.toISOString().split("T")[0];
+
+  resultDiv.innerText =
+    `오늘 날짜: ${todayStr}\n` +
+    `연나이: ${yearAge} / 만나이: ${manAge}\n\n` +
+    lawResults;
 }
-
-    function calculateAges() {
-      const birthDateStr = document.getElementById("birthDate").value.trim();
-      const term = document.getElementById("termSelect").value;
-      const resultDiv = document.getElementById("result");
-
-      const datePattern = /^\d{4}-\d{2}-\d{2}$/;
-      if (!datePattern.test(birthDateStr)) {
-        resultDiv.innerText = "생년월일을 YYYY-MM-DD 형식으로 입력해주세요.";
-        return;
-      }
-
-      const birthDate = new Date(birthDateStr);
-      const currentDate = new Date(); // 오늘 날짜 자동 사용
-
-      if (isNaN(birthDate.getTime())) {
-        resultDiv.innerText = "올바른 생년월일을 입력해주세요.";
-        return;
-      }
-
-      const yearAge = currentDate.getFullYear() - birthDate.getFullYear();
-      let manAge = yearAge;
-      const monthDiff = currentDate.getMonth() - birthDate.getMonth();
-      const dayDiff = currentDate.getDate() - birthDate.getDate();
-      if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-        manAge--;
-      }
-
-      let lawResults = "";
-
-      if (term) {
-        for (const law in 규정) {
-          if (규정[law][term]) {
-            const 기준정보 = 규정[law][term];
-            const 기준 = 기준정보.기준;
-            let 해당 = false;
-            let 설명 = "";
-
-            if (기준 === "연나이") {
-              해당 = yearAge < 기준정보.최대;
-              설명 = `${law} ${term} (연나이 ${기준정보.최대}세 미만): ${해당 ? "해당됨 ✅" : "해당 안 됨 ❌"}`;
-            } else if (기준 === "만나이") {
-              해당 = manAge < 기준정보.최대;
-              설명 = `${law} ${term} (만나이 ${기준정보.최대}세 미만): ${해당 ? "해당됨 ✅" : "해당 안 됨 ❌"}`;
-            } else if (기준 === "만나이범위") {
-              해당 = manAge >= 기준정보.최소 && manAge <= 기준정보.최대;
-              설명 = `${law} ${term} (만나이 ${기준정보.최소}세 이상 ~ ${기준정보.최대}세 이하): ${해당 ? "해당됨 ✅" : "해당 안 됨 ❌"}`;
-            }
-
-            lawResults += 설명 + "\n";
-          }
-        }
-
-        if (!lawResults) {
-          lawResults = "선택한 용어에 해당하는 법률 기준이 없습니다.";
-        }
-      } else {
-        lawResults = "용어를 선택해주세요.";
-      }
-
-      const todayStr = currentDate.toISOString().split('T')[0];
-      resultDiv.innerText = `오늘 날짜: ${todayStr}\n연나이: ${yearAge} / 만나이: ${manAge}\n\n${lawResults}`;
-    }
-
-    
-  </script>
+</script>
 
 <div style="text-align:center;">
   <div style="display:inline-block;">
-    <button 
+    <button
       style="padding:12px 20px; font-size:16px; background:#007bff; color:white; border:none; border-radius:6px; cursor:pointer;"
       onclick="window.open('https://tally.so/r/VLj2Ng', '_blank');"
     >
@@ -203,8 +216,6 @@
     </button>
   </div>
 </div>
-  
+
 </body>
 </html>
-
-
