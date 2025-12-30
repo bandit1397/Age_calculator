@@ -407,10 +407,13 @@ function calculateAges() {
         const links = info.refs.map(makeLawLink).join("<br>");
 
         lawResults += `
-${law} ${term}${기준설명}: ${해당 ? "해당됨 ✅" : "해당 안 됨 ❌"}<br>
-${links}<br><br>`;
+          ${law} ${term}<br>
+          → ${기준설명}<br>
+          → ${해당 ? "해당됨 ✅" : "해당 안 됨 ❌"}<br>
+          → ${links}<br><br>
+          `;
+         }
       }
-    }
     if (!lawResults) lawResults = "선택한 용어에 해당하는 법률 기준이 없습니다.";
   } else {
     lawResults = "용어를 선택해주세요.";
@@ -434,6 +437,7 @@ ${links}<br><br>`;
 
 </body>
 </html>
+
 
 
 
