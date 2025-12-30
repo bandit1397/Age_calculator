@@ -430,19 +430,19 @@ if (기준 === "연나이") {
   기준설명 = `(만나이 ${기준정보.최소}세 이상 ~ ${기준정보.최대}세 이하)`;
 }
 
-lawResults += `${law} ${term}${기준설명}: ${해당 ? "해당됨 ✅" : "해당 안 됨 ❌"}\n`;
+lawResults += `
+${law} ${term}${기준설명}: ${해당 ? "해당됨 ✅" : "해당 안 됨 ❌"}<br>
+${기준정보.refs.map(ref => {
+  const query = encodeURIComponent(ref);
+  return `<a href="https://law.go.kr/LSW/lsSc.do?query=${query}"
+              target="_blank"
+              style="color:#1e90ff; font-weight:600; text-decoration:underline;">
+              ${ref}
+          </a>`;
+}).join("<br>")}
+<br><br>
+`;
 
-
-        if (해당 && 기준정보.refs) {
-          기준정보.refs.forEach(ref => {
-            const url = `https://www.law.go.kr/lsSc.do?query=${encodeURIComponent(ref)}`;
-            lawResults += `🔗 ${ref}\n`;
-          });
-        }
-
-        lawResults += "\n";
-      }
-    }
 
     if (!lawResults) {
       lawResults = "선택한 용어에 해당하는 법률 기준이 없습니다.";
@@ -473,6 +473,7 @@ lawResults += `${law} ${term}${기준설명}: ${해당 ? "해당됨 ✅" : "해�
 
 </body>
 </html>
+
 
 
 
