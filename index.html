@@ -134,25 +134,11 @@ const 규정 = {
 
 };
 
-function makeLawLink(text) {
-  // 법령명과 조 추출 (예: "아동복지법 제3조 제1호" → 아동복지법, 제3조)
-  const lawMatch = text.match(/^(.+?)\s제/);
-  const articleMatch = text.match(/제\d+조/);
-  if (!lawMatch || !articleMatch) return null;
-
-  const lawName = lawMatch[1].trim();
-  const article = articleMatch[0];
-  const url = `https://law.go.kr/법령/${encodeURIComponent(lawName)}/${article}`;
-
-  return `<a href="${url}" target="_blank" style="color:#1e90ff; font-weight:600; text-decoration:underline;">
-            ${text}
-          </a>`;
-}
-
 /* ===== 나이 계산 ===== */
 function calculateAges() {
   const birthDateStr = document.getElementById("birthDate").value.trim();
   const term = document.getElementById("termSelect").value;
+  const selectedLaw = document.getElementById("lawSelect").value;
   const resultDiv = document.getElementById("result");
 
   const datePattern = /^\d{4}-\d{2}-\d{2}$/;
@@ -163,7 +149,6 @@ function calculateAges() {
 
   const birthDate = new Date(birthDateStr);
   const currentDate = new Date();
-
   if (isNaN(birthDate.getTime())) {
     resultDiv.innerText = "올바른 생년월일을 입력해주세요.";
     return;
@@ -177,26 +162,35 @@ function calculateAges() {
 
   let lawResults = "";
 
-  if (term) {
+  if (!term) {
+    lawResults = "용어를 선택해주세요.";
+  } else {
     for (const law in 규정) {
+      if (selectedLaw && law !== selectedLaw) continue; // 선택한 법만 표시
       if (규정[law].terms && 규정[law].terms[term]) {
-        const info = 규정[law].terms[term];
+        const 기준정보 = 규정[law].terms[term];
+        const 기준 = 기준정보.기준;
         let 해당 = false;
 
-        if (info.기준 === "연나이") {
-          해당 = yearAge < info.최대;
-        } else if (info.기준 === "만나이") {
-          해당 = manAge < info.최대;
-        } else if (info.기준 === "만나이범위") {
-          해당 = manAge >= info.최소 && manAge <= info.최대;
-        }
+        if (기준 === "연나이") 해당 = yearAge < 기준정보.최대;
+        else if (기준 === "만나이") 해당 = manAge < 기준정보.최대;
+        else if (기준 === "만나이범위") 해당 = manAge >= 기준정보.최소 && manAge <= 기준정보.최대;
 
         let 기준설명 = "";
-        if (info.기준 === "연나이") 기준설명 = `(연나이 ${info.최대}세 미만)`;
-        else if (info.기준 === "만나이") 기준설명 = `(만나이 ${info.최대}세 미만)`;
-        else if (info.기준 === "만나이범위") 기준설명 = `(만나이 ${info.최소}세 이상 ~ ${info.최대}세 이하)`;
+        if (기준 === "연나이") 기준설명 = `(연나이 ${기준정보.최대}세 미만)`;
+        else if (기준 === "만나이") 기준설명 = `(만나이 ${기준정보.최대}세 미만)`;
+        else if (기준 === "만나이범위") 기준설명 = `(만나이 ${기준정보.최소}세 이상 ~ ${기준정보.최대}세 이하)`;
 
-        const links = info.refs.map(makeLawLink).join("<br>");
+        // 법조문 검색용 링크 (청소년보호법 제2조 제1호 → 청소년보호법 제2조)
+        const links = 기준정보.refs.map(ref => {
+          const searchRef = ref.replace(/(제\d+조).*/, "$1");
+          const query = encodeURIComponent(searchRef);
+          return `<a href="https://law.go.kr/LSW/lsSc.do?query=${query}"
+                     target="_blank"
+                     style="color:#1e90ff; font-weight:600; text-decoration:underline;">
+                     ${ref}
+                  </a>`;
+        }).join("<br>");
 
         lawResults += `
 ${law} ${term}${기준설명}: ${해당 ? "해당됨 ✅" : "해당 안 됨 ❌"}<br>
@@ -206,21 +200,11 @@ ${links}<br><br>
     }
 
     if (!lawResults) lawResults = "선택한 용어에 해당하는 법률 기준이 없습니다.";
-  } else {
-    lawResults = "용어를 선택해주세요.";
   }
 
   const todayStr = currentDate.toISOString().split("T")[0];
-  resultDiv.innerHTML =
-    `오늘 날짜: ${todayStr}<br>` +
-    `연나이: ${yearAge} / 만나이: ${manAge}<br><br>` +
-    lawResults;
+  resultDiv.innerHTML = `오늘 날짜: ${todayStr}<br>연나이: ${yearAge} / 만나이: ${manAge}<br><br>${lawResults}`;
 }
-
-
-
-
-    
 </script>
 
 <div style="text-align:center;">
@@ -236,6 +220,7 @@ ${links}<br><br>
 
 </body>
 </html>
+
 
 
 
