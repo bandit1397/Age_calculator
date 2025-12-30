@@ -189,14 +189,16 @@ function calculateAges() {
         lawResults += `
           ${law} ${term}${기준설명}: ${해당 ? "해당됨 ✅" : "해당 안 됨 ❌"}<br>
           ${기준정보.refs.map(ref => {
-            const q = encodeURIComponent(ref);
-            return `<a href="https://law.go.kr/LSW/lsSc.do?query=${q}"
+            const searchRef = ref.replace(/(제\d+조).*/, "$1");
+            const query = encodeURIComponent(searchRef);
+
+            return `<a href="https://law.go.kr/LSW/lsSc.do?query=${query}"
                        target="_blank"
                        style="color:#1e90ff; font-weight:600; text-decoration:underline;">
                        ${ref}
                     </a>`;
-          }).join("<br>")}
-          <br><br>
+            }).join("<br>")}
+          <br>
         `;
       }
     }
@@ -235,6 +237,7 @@ function calculateAges() {
 
 </body>
 </html>
+
 
 
 
