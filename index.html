@@ -444,18 +444,29 @@ ${기준정보.refs.map(ref => {
 `;
 
 
-    if (!lawResults) {
-      lawResults = "선택한 용어에 해당하는 법률 기준이 없습니다.";
+    let lawResults = "";
+
+if (term) {
+  for (const law in 규정) {
+    if (규정[law].terms && 규정[law].terms[term]) {
+      ...
+      lawResults += `...`;
     }
-  } else {
-    lawResults = "용어를 선택해주세요.";
   }
+
+  if (!lawResults) {
+    lawResults = "선택한 용어에 해당하는 법률 기준이 없습니다.";
+  }
+} else {
+  lawResults = "용어를 선택해주세요.";
+}
+
 
   const todayStr = currentDate.toISOString().split("T")[0];
 
-  resultDiv.innerText =
-    `오늘 날짜: ${todayStr}\n` +
-    `연나이: ${yearAge} / 만나이: ${manAge}\n\n` +
+  resultDiv.innerHTML =
+    `오늘 날짜: ${todayStr}<br>` +
+    `연나이: ${yearAge} / 만나이: ${manAge}<br><br>` +
     lawResults;
 }
 </script>
@@ -473,6 +484,7 @@ ${기준정보.refs.map(ref => {
 
 </body>
 </html>
+
 
 
 
