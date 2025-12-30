@@ -43,9 +43,6 @@ a { color: #1e90ff; text-decoration: underline; }
   <label>법률 선택 (선택하지 않으면 모든 법률 표시):</label>
   <select id="lawSelect">
     <option value="">-- 모든 법률 --</option>
-    <option value="청소년보호법">청소년보호법</option>
-    <option value="식품위생법">식품위생법</option>
-    <!-- 추가 법률 있으면 여기에 옵션 추가 -->
   </select>
 
   <button onclick="calculateAges()">나이 계산</button>
@@ -333,6 +330,43 @@ function makeLawLink(text) {
   return `<a href="${url}" target="_blank" style="color:#1e90ff; font-weight:600; text-decoration:underline;">${text}</a>`;
 }
 
+
+
+
+  
+
+/* ===== 용어 선택에 따른 법률 선택 박스 동적 업데이트 ===== */
+const termSelect = document.getElementById("termSelect");
+const lawSelect = document.getElementById("lawSelect");
+
+function updateLawOptions() {
+  const selectedTerm = termSelect.value;
+  lawSelect.innerHTML = '<option value="">-- 모든 법률 --</option>';
+  if (!selectedTerm) return;
+  for (const law in 규정) {
+    if (규정[law].terms && 규정[law].terms[selectedTerm]) {
+      const option = document.createElement("option");
+      option.value = law;
+      option.text = law;
+      lawSelect.appendChild(option);
+    }
+  }
+}
+
+termSelect.addEventListener("change", updateLawOptions);
+updateLawOptions(); // 초기 페이지 로드 시 적용
+
+
+  
+
+
+
+
+
+
+
+
+  
 /* ===== 나이 계산 ===== */
 function calculateAges() {
   const birthDateStr = document.getElementById("birthDate").value.trim();
@@ -400,5 +434,6 @@ ${links}<br><br>`;
 
 </body>
 </html>
+
 
 
