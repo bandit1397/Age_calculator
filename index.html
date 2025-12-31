@@ -470,7 +470,16 @@ function calculateAges() {
   }
 
   const todayStr = currentDate.toISOString().split("T")[0];
-  resultDiv.innerHTML = `오늘 날짜: ${todayStr}<br>연나이: ${yearAge} / 만나이: ${manAge}<br><br>${lawResults}`;
+  resultDiv.innerHTML = `
+    <div style="text-align:center;">
+      오늘 날짜: ${todayStr}<br>
+      연나이: ${yearAge} / 만나이: ${manAge}
+    </div>
+
+    <div style="text-align:left; margin-top:15px;">
+      ${lawResults}
+    </div>
+  `;
 }
 </script>
 
@@ -487,6 +496,7 @@ function calculateAges() {
 
 </body>
 </html>
+
 
 
 
