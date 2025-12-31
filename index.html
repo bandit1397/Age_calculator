@@ -384,11 +384,7 @@ function makeLawLink(text) {
   const url = `https://law.go.kr/법령/${encodeURIComponent(lawName)}/${article}`;
   return `<a href="${url}" target="_blank" style="color:#1e90ff; font-weight:600; text-decoration:underline;">${text}</a>`;
 }
-
-
-
-
-  
+ 
 
 /* ===== 용어 선택에 따른 법률 선택 박스 동적 업데이트 ===== */
 const termSelect = document.getElementById("termSelect");
@@ -410,16 +406,6 @@ function updateLawOptions() {
 
 termSelect.addEventListener("change", updateLawOptions);
 updateLawOptions(); // 초기 페이지 로드 시 적용
-
-
-  
-
-
-
-
-
-
-
 
   
 /* ===== 나이 계산 ===== */
@@ -496,12 +482,3 @@ function calculateAges() {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
