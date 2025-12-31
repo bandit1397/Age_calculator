@@ -5,15 +5,70 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>나이 계산기</title>
 <style>
-body { font-family: Arial, sans-serif; padding: 10px; margin: 0; background: #f7f7f7; }
-.container { max-width: 400px; margin: 0 auto; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-h2 { font-size: 20px; text-align: center; margin-bottom: 15px; }
-label { font-size: 14px; display: block; margin-top: 10px; }
-input, select { width: 100%; padding: 10px; margin-top: 5px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; }
-button { width: 100%; padding: 12px; font-size: 16px; margin-top: 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-button:hover { background-color: #0056b3; }
-#result { margin-top: 20px; font-size: 16px; font-weight: bold; white-space: pre-line; word-break: break-word; }
-a { color: #1e90ff; text-decoration: underline; }
+body {
+  font-family: Arial, sans-serif;
+  padding: 10px;
+  margin: 0;
+  background: #f7f7f7;
+}
+
+.container {
+  max-width: 400px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+h2 {
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+label {
+  font-size: 14px;
+  display: block;
+  margin-top: 10px;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  margin-top: 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+#result {
+  margin-top: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;   /* 🔹 핵심 */
+}
+
+a {
+  color: #1e90ff;
+  text-decoration: underline;
+}
 </style>
 </head>
 <body>
@@ -432,6 +487,7 @@ function calculateAges() {
 
 </body>
 </html>
+
 
 
 
