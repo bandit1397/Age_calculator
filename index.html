@@ -374,7 +374,7 @@ const 규정 = {
 }
 };
 
-/* ===== 법조문 링크 생성 (법령 + 행정규칙 SEQ 우선) ===== */
+/* ===== 법조문 링크 생성 (법령 + 행정규칙 + 법 전체 지원) ===== */
 function makeLawLink(text) {
   if (!text) return "";
 
@@ -384,22 +384,17 @@ function makeLawLink(text) {
   const isAdminRule = /규칙|처리규칙|훈령|예규|고시/.test(text);
 
   if (isAdminRule) {
-    // 규칙명만 추출 (조/항/호 제거)
     const ruleName = text.replace(/\s제\d+조.*$/, "").trim();
 
-    // 🔹 SEQ가 있으면 → 직접 링크 (최우선)
-    if (ADMIN_RULE_SEQ[ruleName]) {
-      const seq = ADMIN_RULE_SEQ[ruleName];
-      return `<a href="https://www.law.go.kr/LSW/admRulInfoP.do?admRulSeq=${seq}"
+    if (ADMIN_RULE_SEQ && ADMIN_RULE_SEQ[ruleName]) {
+      return `<a href="https://www.law.go.kr/LSW/admRulInfoP.do?admRulSeq=${ADMIN_RULE_SEQ[ruleName]}"
                 target="_blank"
                 style="color:#1e90ff; font-weight:600; text-decoration:underline;">
                 ${text}
               </a>`;
     }
 
-    // 🔹 없으면 검색으로 폴백
-    const q = encodeURIComponent(ruleName);
-    return `<a href="https://www.law.go.kr/LSW/admRulSc.do?query=${q}"
+    return `<a href="https://www.law.go.kr/LSW/admRulSc.do?query=${encodeURIComponent(ruleName)}"
               target="_blank"
               style="color:#1e90ff; font-weight:600; text-decoration:underline;">
               ${text}
@@ -407,29 +402,45 @@ function makeLawLink(text) {
   }
 
   /* =========================
-     2. 법령 처리
+     2. 법령 + 조문 처리
      ========================= */
   const lawMatch = text.match(/^(.+?)\s제/);
   const articleMatch = text.match(/제\d+조/);
 
-  if (!lawMatch || !articleMatch) {
-    const q = encodeURIComponent(text);
-    return `<a href="https://www.law.go.kr/LSW/lsSc.do?query=${q}"
+  if (lawMatch && articleMatch) {
+    const lawName = lawMatch[1].trim();
+    const article = articleMatch[0];
+
+    return `<a href="https://www.law.go.kr/법령/${encodeURIComponent(lawName)}/${article}"
               target="_blank"
               style="color:#1e90ff; font-weight:600; text-decoration:underline;">
               ${text}
             </a>`;
   }
 
-  const lawName = lawMatch[1].trim();
-  const article = articleMatch[0];
+  /* =========================
+     3. 법령 전체 (조문 없는 경우) ⭐ 핵심
+     ========================= */
+  const pureLawMatch = text.match(/^[가-힣]+법$/);
 
-  return `<a href="https://www.law.go.kr/법령/${encodeURIComponent(lawName)}/${article}"
+  if (pureLawMatch) {
+    return `<a href="https://www.law.go.kr/법령/${encodeURIComponent(text)}"
+              target="_blank"
+              style="color:#1e90ff; font-weight:600; text-decoration:underline;">
+              ${text}
+            </a>`;
+  }
+
+  /* =========================
+     4. 최후 폴백 (검색)
+     ========================= */
+  return `<a href="https://www.law.go.kr/LSW/lsSc.do?query=${encodeURIComponent(text)}"
             target="_blank"
             style="color:#1e90ff; font-weight:600; text-decoration:underline;">
             ${text}
           </a>`;
 }
+
 
  
 
@@ -536,6 +547,7 @@ function calculateAges() {
 
 </body>
 </html>
+
 
 
 
