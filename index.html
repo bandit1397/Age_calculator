@@ -374,24 +374,32 @@ const 규정 = {
 }
 };
 
-/* ===== 법조문 링크 생성 (법령 + 행정규칙 안전 처리) ===== */
+/* ===== 법조문 링크 생성 (법령 + 행정규칙 SEQ 우선) ===== */
 function makeLawLink(text) {
   if (!text) return "";
 
   /* =========================
-     1. 행정규칙 판별
+     1. 행정규칙 처리
      ========================= */
   const isAdminRule = /규칙|처리규칙|훈령|예규|고시/.test(text);
 
   if (isAdminRule) {
-    // 🔹 조·항·호 제거 → 규칙명만 추출
+    // 규칙명만 추출 (조/항/호 제거)
     const ruleName = text.replace(/\s제\d+조.*$/, "").trim();
+
+    // 🔹 SEQ가 있으면 → 직접 링크 (최우선)
+    if (ADMIN_RULE_SEQ[ruleName]) {
+      const seq = ADMIN_RULE_SEQ[ruleName];
+      return `<a href="https://www.law.go.kr/LSW/admRulInfoP.do?admRulSeq=${seq}"
+                target="_blank"
+                style="color:#1e90ff; font-weight:600; text-decoration:underline;">
+                ${text}
+              </a>`;
+    }
+
+    // 🔹 없으면 검색으로 폴백
     const q = encodeURIComponent(ruleName);
-
-    // 🔹 "검색 페이지"로 이동 (가장 안정적)
-    const url = `https://www.law.go.kr/LSW/admRulSc.do?query=${q}`;
-
-    return `<a href="${url}"
+    return `<a href="https://www.law.go.kr/LSW/admRulSc.do?query=${q}"
               target="_blank"
               style="color:#1e90ff; font-weight:600; text-decoration:underline;">
               ${text}
@@ -416,15 +424,12 @@ function makeLawLink(text) {
   const lawName = lawMatch[1].trim();
   const article = articleMatch[0];
 
-  const url = `https://www.law.go.kr/법령/${encodeURIComponent(lawName)}/${article}`;
-
-  return `<a href="${url}"
+  return `<a href="https://www.law.go.kr/법령/${encodeURIComponent(lawName)}/${article}"
             target="_blank"
             style="color:#1e90ff; font-weight:600; text-decoration:underline;">
             ${text}
           </a>`;
 }
-
 
  
 
@@ -531,6 +536,7 @@ function calculateAges() {
 
 </body>
 </html>
+
 
 
 
