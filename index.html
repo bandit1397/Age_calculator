@@ -445,7 +445,14 @@ function calculateAges() {
         else if (info.기준 === "만나이") 기준설명 = `(만나이 ${info.최대}세 미만)`;
         else if (info.기준 === "만나이범위") 기준설명 = `(만나이 ${info.최소}세 이상 ~ ${info.최대}세 이하)`;
 
-        const links = info.refs.map(makeLawLink).join("<br>");
+        const links = info.refs.map((ref, idx) => {
+          const link = makeLawLink(ref);
+          if (!link) return "";
+
+          // 첫 줄은 화살표, 두 번째 줄부터는 화살표 자리만 공백
+          const prefix = idx === 0 ? "→ " : "&nbsp;&nbsp;&nbsp; ";
+          return `${prefix}${link}`;
+        }).join("<br>");
 
         lawResults += `◎ ${law} → ${term}<br>→ ${기준설명}<br>→ ${해당 ? "해당됨 ✅" : "해당 안 됨 ❌"}<br>→ ${links}<br><br>`;
        }
@@ -482,6 +489,7 @@ function calculateAges() {
 
 </body>
 </html>
+
 
 
 
