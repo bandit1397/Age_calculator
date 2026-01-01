@@ -100,7 +100,7 @@ a {
     <option value="">-- 모든 법률 --</option>
   </select>
 
-  <button onclick="calculateAges()">나이 계산</button>
+  <button onclick="calculateAges()">나이 계산(클릭)</button>
 
   <div id="result"></div>
 </div>
@@ -337,7 +337,7 @@ const 규정 = {
       최대: 19,
       refs: [
         "소년법 제2조",
-        "소년업무 처리규칙 제2조 제1호"
+        "소년업무규칙 제2조 제1호"
       ]
     },
 
@@ -347,7 +347,7 @@ const 규정 = {
       최대: 19,
       refs: [
         "소년법 제4조 제1항 제2호",
-        "소년업무 처리규칙 제2조 제2호"
+        "소년업무규칙 제2조 제2호"
       ]
     },
 
@@ -357,7 +357,7 @@ const 규정 = {
       최대: 14,
       refs: [
         "소년법 제4조 제1항 제1호",
-        "소년업무 처리규칙 제2조 제1호"
+        "소년업무규칙 제2조 제1호"
       ]
     },
 
@@ -367,7 +367,7 @@ const 규정 = {
       최대: 14,
       refs: [
         "소년법 제4조 제1항 제3호",
-        "소년업무 처리규칙 제2조 제3호"
+        "소년업무규칙 제2조 제3호"
       ]
     }
   }
@@ -447,7 +447,7 @@ function calculateAges() {
 
         const links = info.refs.map(makeLawLink).join("<br>");
 
-        lawResults += `${law} ${term}<br>→ ${기준설명}<br>→ ${해당 ? "해당됨 ✅" : "해당 안 됨 ❌"}<br>→ ${links}<br><br>`;
+        lawResults += `◎ ${law} → ${term}<br>→ ${기준설명}<br>→ ${해당 ? "해당됨 ✅" : "해당 안 됨 ❌"}<br>→ ${links}<br><br>`;
        }
      }
     if (!lawResults) lawResults = "선택한 용어에 해당하는 법률 기준이 없습니다.";
@@ -482,3 +482,8 @@ function calculateAges() {
 
 </body>
 </html>
+
+
+
+
+
