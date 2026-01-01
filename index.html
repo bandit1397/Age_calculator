@@ -386,14 +386,6 @@ function makeLawLink(text) {
   if (isAdminRule) {
     const ruleName = text.replace(/\s제\d+조.*$/, "").trim();
 
-    if (ADMIN_RULE_SEQ && ADMIN_RULE_SEQ[ruleName]) {
-      return `<a href="https://www.law.go.kr/LSW/admRulInfoP.do?admRulSeq=${ADMIN_RULE_SEQ[ruleName]}"
-                target="_blank"
-                style="color:#1e90ff; font-weight:600; text-decoration:underline;">
-                ${text}
-              </a>`;
-    }
-
     return `<a href="https://www.law.go.kr/LSW/admRulSc.do?query=${encodeURIComponent(ruleName)}"
               target="_blank"
               style="color:#1e90ff; font-weight:600; text-decoration:underline;">
@@ -419,7 +411,7 @@ function makeLawLink(text) {
   }
 
   /* =========================
-     3. 법령 전체 (조문 없는 경우) ⭐ 핵심
+     3. 법령 전체 (조문 없는 경우)
      ========================= */
   const pureLawMatch = text.match(/^[가-힣]+법$/);
 
@@ -547,6 +539,7 @@ function calculateAges() {
 
 </body>
 </html>
+
 
 
 
