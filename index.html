@@ -374,19 +374,17 @@ const 규정 = {
 }
 };
 
-/* ===== 법조문 링크 생성 (법령 + 행정규칙 + 법 전체 지원) ===== */
+/* ===== 법조문 링크 생성 (법령 + 행정규칙 + 전체법 지원) ===== */
 function makeLawLink(text) {
   if (!text) return "";
 
   /* =========================
-     1. 행정규칙 처리
+     1. 법령 전체 (조문 없음)
      ========================= */
-  const isAdminRule = /규칙|처리규칙|훈령|예규|고시/.test(text);
+  const fullLawMatch = text.match(/법$|법\s시행령$|법\s시행규칙$/);
 
-  if (isAdminRule) {
-    const ruleName = text.replace(/\s제\d+조.*$/, "").trim();
-
-    return `<a href="https://www.law.go.kr/LSW/admRulSc.do?query=${encodeURIComponent(ruleName)}"
+  if (fullLawMatch && !text.includes("제")) {
+    return `<a href="https://www.law.go.kr/법령/${encodeURIComponent(text)}"
               target="_blank"
               style="color:#1e90ff; font-weight:600; text-decoration:underline;">
               ${text}
@@ -394,7 +392,7 @@ function makeLawLink(text) {
   }
 
   /* =========================
-     2. 법령 + 조문 처리
+     2. 법령 + 조문
      ========================= */
   const lawMatch = text.match(/^(.+?)\s제/);
   const articleMatch = text.match(/제\d+조/);
@@ -411,13 +409,16 @@ function makeLawLink(text) {
   }
 
   /* =========================
-     3. 법령 전체 (조문 없는 경우)
+     3. 행정규칙 (훈령·예규·고시·처리규칙)
      ========================= */
-  const pureLawMatch = text.match(/^[가-힣]+법$/);
+  const isAdminRule = /(처리)?규칙|훈령|예규|고시/.test(text);
 
-  if (pureLawMatch) {
-    return `<a href="https://www.law.go.kr/법령/${encodeURIComponent(text)}"
+  if (isAdminRule) {
+    const ruleName = text.replace(/\s제\d+조.*$/, "").trim();
+
+    return `<a href="https://www.law.go.kr/LSW/admRulSc.do?query=${encodeURIComponent(ruleName)}"
               target="_blank"
+              title="현행 규칙이 아닐 수 있어 검색 페이지로 연결됩니다"
               style="color:#1e90ff; font-weight:600; text-decoration:underline;">
               ${text}
             </a>`;
@@ -429,7 +430,7 @@ function makeLawLink(text) {
   return `<a href="https://www.law.go.kr/LSW/lsSc.do?query=${encodeURIComponent(text)}"
             target="_blank"
             style="color:#1e90ff; font-weight:600; text-decoration:underline;">
-            ${text}
+            ${text} <span style="font-size:12px; color:#666;">(검색)</span>
           </a>`;
 }
 
@@ -539,6 +540,7 @@ function calculateAges() {
 
 </body>
 </html>
+
 
 
 
