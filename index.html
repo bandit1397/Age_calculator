@@ -725,8 +725,27 @@ function calculateBirthYear() {
   const yearAgeBirth = year - age;
 
   // 만나이: 생일이 지났으면 (현재연도 - 나이), 안 지났으면 (현재연도 - 나이 - 1)
-  const latest = new Date(today.getFullYear() - age, today.getMonth(), today.getDate());
-  const earliest = new Date(today.getFullYear() - age - 1, today.getMonth(), today.getDate() + 1);
+  // 2월 29일은 평년에 없으므로 2월 28일로 맞춤
+  const sameDayIn = y => {
+    const d = new Date(y, today.getMonth(), today.getDate());
+    if (d.getMonth() !== today.getMonth()) d.setDate(0);
+    return d;
+  };
+  const latest = sameDayIn(year - age);
+  const earliest = sameDayIn(year - age - 1);
+  earliest.setDate(earliest.getDate() + 1);
+
+  // 12월 31일에는 모든 사람의 생일이 지났으므로 "생일 안 지남" 경우가 없음
+  const isLastDay = today.getMonth() === 11 && today.getDate() === 31;
+  const notPassedRow = isLastDay
+    ? `<div class="year-row">
+        <div class="cond"><b>생일 안 지남</b><br>12-31은 모두 생일 지남</div>
+        <div class="year">해당 없음</div>
+      </div>`
+    : `<div class="year-row">
+        <div class="cond"><b>생일 안 지남</b><br>${formatDate(earliest).slice(5)} ~ 12-31 생</div>
+        <div class="year">${year - age - 1}년생</div>
+      </div>`;
 
   resultDiv.innerHTML = `
     <div class="today">오늘 날짜: ${formatDate(today)}</div>
@@ -742,10 +761,7 @@ function calculateBirthYear() {
         <div class="cond"><b>생일 지남</b><br>01-01 ~ ${todayMD} 생</div>
         <div class="year">${year - age}년생</div>
       </div>
-      <div class="year-row">
-        <div class="cond"><b>생일 안 지남</b><br>${formatDate(earliest).slice(5)} ~ 12-31 생</div>
-        <div class="year">${year - age - 1}년생</div>
-      </div>
+      ${notPassedRow}
       <div class="range">출생일 범위: ${formatDate(earliest)} ~ ${formatDate(latest)}</div>
     </div>
   `;
