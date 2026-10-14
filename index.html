@@ -4,105 +4,279 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>나이 계산기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-soft: #eff4ff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --bg: #f1f4f9;
+  --ok: #15803d;
+  --ok-soft: #dcfce7;
+  --no: #b91c1c;
+  --no-soft: #fee2e2;
+  --warm: #c2410c;
+  --warm-soft: #fff4e8;
+}
+
+* { box-sizing: border-box; }
+
 body {
-  font-family: Arial, sans-serif;
-  padding: 10px;
+  font-family: "Noto Sans KR", "Malgun Gothic", Arial, sans-serif;
+  padding: 16px;
   margin: 0;
-  background: #f7f7f7;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app {
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.app-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 900;
+  margin: 6px 0 14px;
+}
+
+/* ===== 상단 탭 ===== */
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  background: #dfe5ee;
+  padding: 5px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+.tab {
+  margin: 0;
+  padding: 12px 6px;
+  font-size: 15px;
+  font-weight: 700;
+  background: transparent;
+  color: #4b5563;
+  border-radius: 9px;
+  line-height: 1.3;
+}
+.tab:hover { background: rgba(255,255,255,0.5); }
+.tab.active {
+  background: #fff;
+  color: var(--primary);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+.tab small {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
 }
 
 .container {
-  max-width: 400px;
-  margin: 0 auto;
   background: #fff;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
 }
 
-h2 {
-  font-size: 20px;
-  text-align: center;
-  margin-bottom: 15px;
-}
+.panel.collapsed { display: none; }
 
 label {
   font-size: 14px;
+  font-weight: 700;
   display: block;
-  margin-top: 10px;
+  margin-top: 14px;
+  color: #374151;
 }
+label:first-child { margin-top: 0; }
 
 input, select {
   width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 13px 12px;
+  margin-top: 6px;
+  font-size: 18px;
+  font-family: inherit;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text);
+}
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
 }
 
 button {
   width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  margin-top: 15px;
-  background-color: #007bff;
+  padding: 14px;
+  font-size: 17px;
+  font-weight: 700;
+  font-family: inherit;
+  margin-top: 18px;
+  background-color: var(--primary);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   cursor: pointer;
 }
+button:hover { background-color: var(--primary-dark); }
 
-button:hover {
-  background-color: #0056b3;
+/* ===== 결과 영역 ===== */
+#result, #birthYearResult { margin-top: 18px; }
+
+.today {
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
 }
 
-#result {
-  max-width: 360px;     /* 카드 폭 */
-  margin: 20px auto;   /* 화면 중앙 배치 */
-  font-size: 16px;
-  font-weight: bold;
-  text-align: left;    /* 내부 글자는 좌측 정렬 */
+.big-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
-a {
-  color: #1e90ff;
-  text-decoration: underline;
+.big-card {
+  border-radius: 12px;
+  padding: 12px 8px;
+  text-align: center;
 }
+.big-card .cap { font-size: 14px; font-weight: 700; }
+.big-card .val { font-size: 34px; font-weight: 900; line-height: 1.2; }
+.big-card .val span { font-size: 18px; font-weight: 700; }
+.big-card.blue { background: var(--primary-soft); color: var(--primary); }
+.big-card.warm { background: var(--warm-soft); color: var(--warm); }
+
+.law-card {
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.law-card.ok { border-left-color: var(--ok); }
+.law-card.no { border-left-color: var(--no); }
+.law-card .law-name { font-weight: 900; font-size: 16px; }
+.law-card .law-std { color: var(--muted); font-size: 14px; }
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 900;
+  margin: 4px 0;
+}
+.badge.ok { background: var(--ok-soft); color: var(--ok); }
+.badge.no { background: var(--no-soft); color: var(--no); }
+.law-card .refs { font-size: 14px; }
+
+.msg {
+  text-align: center;
+  padding: 12px;
+  border-radius: 10px;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 15px;
+  margin-top: 10px;
+}
+
+.year-card { border-radius: 12px; padding: 14px; margin-top: 10px; }
+.year-card.blue { background: var(--primary-soft); }
+.year-card.warm { background: var(--warm-soft); }
+.year-card .cap { font-size: 15px; font-weight: 700; }
+.year-card.blue .cap { color: var(--primary); }
+.year-card.warm .cap { color: var(--warm); }
+.year-card .year { font-size: 32px; font-weight: 900; line-height: 1.3; }
+.year-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-top: 1px dashed rgba(194,65,12,0.3);
+}
+.year-row.first { border-top: none; }
+.year-row .cond { font-size: 14px; color: #4b5563; line-height: 1.4; }
+.year-row .cond b { color: var(--text); font-size: 15px; }
+.year-row .year { font-size: 26px; white-space: nowrap; }
+.range { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+.feedback { text-align: center; margin: 18px 0 8px; }
+.feedback button {
+  width: auto;
+  padding: 10px 22px;
+  font-size: 15px;
+  background: #fff;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+.feedback button:hover { background: var(--primary-soft); }
+
+a { color: var(--primary); text-decoration: underline; }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <h2>연나이 / 만나이 계산기</h2>
+<div class="app">
+  <div class="app-title">나이 계산기</div>
 
-  <label>생년월일:</label>
-  <input type="text" id="birthDate" placeholder="예: 2008-10-17">
+  <div class="tabs">
+    <button class="tab active" id="tabAge" onclick="activatePanel('panelAge')">
+      연나이 / 만나이<small>생년월일 → 나이</small>
+    </button>
+    <button class="tab" id="tabBirth" onclick="activatePanel('panelBirth')">
+      출생연도 계산<small>나이 → 출생연도</small>
+    </button>
+  </div>
 
-  <label>용어 선택:</label>
-  <select id="termSelect">
-    <option value="">-- 용어 선택 --</option>
-    <option value="소년">소년</option>
-    <option value="아동">아동</option>
-    <option value="아동등">아동등</option>
-    <option value="아동ㆍ청소년">아동ㆍ청소년</option>
-    <option value="어린이">어린이</option>
-    <option value="연소자">연소자</option>
-    <option value="청소년">청소년</option>
-    <option value="촉법소년">촉법소년</option>
-    <option value="범죄소년">범죄소년</option>
-    <option value="우범소년">우범소년</option>
-    <option value="형사미성년자">형사미성년자</option>
-  </select>
+  <div class="container panel" id="panelAge">
+    <label>생년월일</label>
+    <input type="text" id="birthDate" placeholder="예: 2008-10-17">
 
-  <label>법률 선택 (선택하지 않으면 모든 법률 표시):</label>
-  <select id="lawSelect">
-    <option value="">-- 모든 법률 --</option>
-  </select>
+    <label>용어 선택</label>
+    <select id="termSelect">
+      <option value="">-- 용어 선택 --</option>
+      <option value="소년">소년</option>
+      <option value="아동">아동</option>
+      <option value="아동등">아동등</option>
+      <option value="아동ㆍ청소년">아동ㆍ청소년</option>
+      <option value="어린이">어린이</option>
+      <option value="연소자">연소자</option>
+      <option value="청소년">청소년</option>
+      <option value="촉법소년">촉법소년</option>
+      <option value="범죄소년">범죄소년</option>
+      <option value="우범소년">우범소년</option>
+      <option value="형사미성년자">형사미성년자</option>
+    </select>
 
-  <button onclick="calculateAges()">나이 계산(클릭)</button>
+    <label>법률 선택 <span style="font-weight:400; color:#6b7280;">(선택하지 않으면 모든 법률)</span></label>
+    <select id="lawSelect">
+      <option value="">-- 모든 법률 --</option>
+    </select>
 
-  <div id="result"></div>
+    <button onclick="calculateAges()">나이 계산</button>
+
+    <div id="result"></div>
+  </div>
+
+  <div class="container panel collapsed" id="panelBirth">
+    <label>현재 나이 (숫자만)</label>
+    <input type="number" id="ageInput" inputmode="numeric" min="0" max="150" placeholder="예: 17">
+
+    <button onclick="calculateBirthYear()">출생연도 계산</button>
+
+    <div id="birthYearResult"></div>
+  </div>
 </div>
 
 <script>
@@ -505,37 +679,96 @@ function calculateAges() {
           return `${prefix}${link}`;
         }).join("<br>");
 
-        lawResults += `◎ ${law} → ${term}<br>→ ${기준설명}<br>→ ${해당 ? "해당됨 ✅" : "해당 안 됨 ❌"}<br>${links}<br><br>`;
+        lawResults += `
+          <div class="law-card ${해당 ? "ok" : "no"}">
+            <div class="law-name">${law}</div>
+            <div class="law-std">${term} ${기준설명}</div>
+            <span class="badge ${해당 ? "ok" : "no"}">${해당 ? "✅ 해당됨" : "❌ 해당 안 됨"}</span>
+            <div class="refs">${links}</div>
+          </div>`;
        }
      }
-    if (!lawResults) lawResults = "선택한 용어에 해당하는 법률 기준이 없습니다.";
+    if (!lawResults) lawResults = `<div class="msg">선택한 용어에 해당하는 법률 기준이 없습니다.</div>`;
   } else {
-    lawResults = "용어를 선택해주세요.";
+    lawResults = `<div class="msg">용어를 선택하면 법률별 해당 여부가 표시됩니다.</div>`;
   }
 
-  const todayStr = currentDate.toISOString().split("T")[0];
   resultDiv.innerHTML = `
-    <div style="text-align:center;">
-      오늘 날짜: ${todayStr}<br>
-      연나이: ${yearAge} / 만나이: ${manAge}
+    <div class="today">오늘 날짜: ${formatDate(currentDate)}</div>
+    <div class="big-row">
+      <div class="big-card blue"><div class="cap">연나이</div><div class="val">${yearAge}<span>세</span></div></div>
+      <div class="big-card warm"><div class="cap">만나이</div><div class="val">${manAge}<span>세</span></div></div>
+    </div>
+    ${lawResults}
+  `;
+}
+
+/* ===== 나이 → 출생연도 계산 ===== */
+function formatDate(d) {
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+
+function calculateBirthYear() {
+  const ageStr = document.getElementById("ageInput").value.trim();
+  const resultDiv = document.getElementById("birthYearResult");
+
+  if (!/^\d{1,3}$/.test(ageStr)) { resultDiv.innerText = "나이를 숫자로 입력해주세요."; return; }
+
+  const age = parseInt(ageStr, 10);
+  const today = new Date();
+  const year = today.getFullYear();
+  const todayMD = `${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+  // 연나이: 현재연도 - 나이
+  const yearAgeBirth = year - age;
+
+  // 만나이: 생일이 지났으면 (현재연도 - 나이), 안 지났으면 (현재연도 - 나이 - 1)
+  const latest = new Date(today.getFullYear() - age, today.getMonth(), today.getDate());
+  const earliest = new Date(today.getFullYear() - age - 1, today.getMonth(), today.getDate() + 1);
+
+  resultDiv.innerHTML = `
+    <div class="today">오늘 날짜: ${formatDate(today)}</div>
+
+    <div class="year-card blue">
+      <div class="cap">연나이 ${age}세</div>
+      <div class="year">${yearAgeBirth}년생</div>
     </div>
 
-    <div style="text-align:left; margin-top:15px;">
-      ${lawResults}
+    <div class="year-card warm">
+      <div class="cap">만나이 ${age}세</div>
+      <div class="year-row first">
+        <div class="cond"><b>생일 지남</b><br>01-01 ~ ${todayMD} 생</div>
+        <div class="year">${year - age}년생</div>
+      </div>
+      <div class="year-row">
+        <div class="cond"><b>생일 안 지남</b><br>${formatDate(earliest).slice(5)} ~ 12-31 생</div>
+        <div class="year">${year - age - 1}년생</div>
+      </div>
+      <div class="range">출생일 범위: ${formatDate(earliest)} ~ ${formatDate(latest)}</div>
     </div>
   `;
 }
+
+/* ===== 패널 전환: 클릭한 계산기만 활성화 ===== */
+function activatePanel(id) {
+  document.querySelectorAll(".panel").forEach(p => {
+    p.classList.toggle("collapsed", p.id !== id);
+  });
+  document.getElementById("tabAge").classList.toggle("active", id === "panelAge");
+  document.getElementById("tabBirth").classList.toggle("active", id === "panelBirth");
+  const firstInput = document.querySelector(`#${id} input`);
+  if (firstInput) firstInput.focus();
+}
+
+document.getElementById("ageInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") calculateBirthYear();
+});
 </script>
 
-<div style="text-align:center;">
-  <div style="display:inline-block;">
-    <button
-      style="padding:12px 20px; font-size:16px; background:#007bff; color:white; border:none; border-radius:6px; cursor:pointer;"
-      onclick="window.open('https://tally.so/r/VLj2Ng', '_blank');"
-    >
-      의견 제출
-    </button>
-  </div>
+<div class="feedback">
+  <button onclick="window.open('https://tally.so/r/VLj2Ng', '_blank');">의견 제출</button>
 </div>
 
 </body>
